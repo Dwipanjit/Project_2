@@ -1,6 +1,6 @@
 import { StockData, ApiResponse, ApiError } from '@/types/stock';
 
-// Mock data for development - replace with actual Delta Exchange India API
+// Mock data for fallback when API fails
 const MOCK_STOCK_DATA: StockData[] = [
   { symbol: 'BTCUSDT', price: 43250.50, changePercent: 2.45, volume: 1234567, marketCap: 850000000000 },
   { symbol: 'ETHUSDT', price: 2650.75, changePercent: -1.23, volume: 987654, marketCap: 320000000000 },
@@ -14,42 +14,7 @@ const MOCK_STOCK_DATA: StockData[] = [
   { symbol: 'ATOMUSDT', price: 12.34, changePercent: -1.45, volume: 234567, marketCap: 3600000000 },
 ];
 
-// Simulate API delay
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-
-export async function fetchStockData(): Promise<ApiResponse> {
-  try {
-    // Simulate network delay
-    await delay(1000);
-    
-    // Simulate occasional API failures (10% chance)
-    if (Math.random() < 0.1) {
-      throw new Error('API service temporarily unavailable');
-    }
-
-    return {
-      success: true,
-      data: MOCK_STOCK_DATA,
-      timestamp: new Date().toISOString(),
-    };
-  } catch (error) {
-    const apiError: ApiError = {
-      message: error instanceof Error ? error.message : 'Unknown error occurred',
-      code: 'FETCH_ERROR',
-      status: 500,
-    };
-
-    return {
-      success: false,
-      data: [],
-      error: apiError.message,
-      timestamp: new Date().toISOString(),
-    };
-  }
-}
-
-// Real Delta Exchange India API integration (commented out for now)
-/*
+// Real Delta Exchange India API integration
 export async function fetchStockDataFromDeltaExchange(): Promise<ApiResponse> {
   try {
     const response = await fetch('https://api.delta.exchange/v2/tickers', {
@@ -66,13 +31,16 @@ export async function fetchStockDataFromDeltaExchange(): Promise<ApiResponse> {
     const data = await response.json();
     
     // Transform Delta Exchange data to our format
-    const transformedData: StockData[] = data.result.map((item: any) => ({
-      symbol: item.symbol,
-      price: parseFloat(item.close),
-      changePercent: parseFloat(item.change_24h),
-      volume: parseFloat(item.volume),
-      lastUpdated: item.timestamp,
-    }));
+    const transformedData: StockData[] = data.result
+      .filter((item: any) => item.symbol && item.close && item.change_24h !== undefined)
+      .map((item: any) => ({
+        symbol: item.symbol,
+        price: parseFloat(item.close),
+        changePercent: parseFloat(item.change_24h),
+        volume: parseFloat(item.volume) || 0,
+        lastUpdated: item.timestamp,
+      }))
+      .slice(0, 50); // Limit to top 50 for better performance
 
     return {
       success: true,
@@ -94,7 +62,34 @@ export async function fetchStockDataFromDeltaExchange(): Promise<ApiResponse> {
     };
   }
 }
-*/
+
+export async function fetchStockData(): Promise<ApiResponse> {
+  try {
+    // Try real API first
+    const apiResponse = await fetchStockDataFromDeltaExchange();
+    
+    if (apiResponse.success && apiResponse.data.length > 0) {
+      return apiResponse;
+    }
+    
+    // Fallback to mock data if API fails or returns no data
+    console.warn('API failed, using mock data:', apiResponse.error);
+    return {
+      success: true,
+      data: MOCK_STOCK_DATA,
+      timestamp: new Date().toISOString(),
+    };
+  } catch (error) {
+    // Fallback to mock data on any error
+    console.warn('API error, using mock data:', error);
+    return {
+      success: true,
+      data: MOCK_STOCK_DATA,
+      timestamp: new Date().toISOString(),
+    };
+  }
+}
+
 
 export function filterStocks(stocks: StockData[], query: string): StockData[] {
   if (!query.trim()) {

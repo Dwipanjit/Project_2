@@ -7,6 +7,9 @@ import SearchBar from '@/components/SearchBar';
 import StockTable from '@/components/StockTable';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import ErrorMessage from '@/components/ErrorMessage';
+import PriceChart from '@/components/PriceChart';
+import ChangeChart from '@/components/ChangeChart';
+import MarketOverview from '@/components/MarketOverview';
 
 export default function Dashboard() {
   const [stocks, setStocks] = useState<StockData[]>([]);
@@ -163,6 +166,45 @@ export default function Dashboard() {
             <ErrorMessage message={error} onRetry={handleRetry} />
           ) : (
             <div>
+              {/* Charts Section */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <PriceChart stocks={filteredStocks} title="Top Assets by Price" />
+                <ChangeChart stocks={filteredStocks} title="24h Price Changes" />
+              </div>
+              
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                <div className="lg:col-span-2">
+                  <MarketOverview stocks={filteredStocks} title="Market Volume Distribution" />
+                </div>
+                <div className="bg-white p-6 rounded-lg shadow">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Stats</h3>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">Total Assets</span>
+                      <span className="font-semibold text-gray-900">{stocks.length}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">Gainers</span>
+                      <span className="font-semibold text-success-600">
+                        {stocks.filter(s => s.changePercent > 0).length}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">Losers</span>
+                      <span className="font-semibold text-danger-600">
+                        {stocks.filter(s => s.changePercent < 0).length}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">Avg Change</span>
+                      <span className="font-semibold text-gray-900">
+                        {(stocks.reduce((sum, s) => sum + s.changePercent, 0) / stocks.length).toFixed(2)}%
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               {/* Results Summary */}
               <div className="mb-4">
                 <p className="text-sm text-gray-600">
