@@ -14,6 +14,7 @@ export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [lastUpdated, setLastUpdated] = useState<string>('');
 
   const loadStockData = async () => {
     try {
@@ -48,6 +49,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     loadStockData();
+    setLastUpdated(new Date().toLocaleString());
   }, []);
 
   return (
@@ -187,7 +189,7 @@ export default function Dashboard() {
       <footer className="bg-white border-t">
         <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
           <p className="text-center text-sm text-gray-500">
-            Data provided by Delta Exchange India API • Last updated: {new Date().toLocaleString()}
+            Data provided by Delta Exchange India API • Last updated: {lastUpdated || 'Loading...'}
           </p>
         </div>
       </footer>
