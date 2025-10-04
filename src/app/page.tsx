@@ -26,7 +26,7 @@ export default function Dashboard() {
       
       // Add timeout to prevent hanging
       const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Request timeout')), 10000)
+        setTimeout(() => reject(new Error('Request timeout - API took too long to respond')), 15000)
       );
       
       const response = await Promise.race([
@@ -37,11 +37,13 @@ export default function Dashboard() {
       if (response.success) {
         setStocks(response.data);
         setFilteredStocks(response.data);
+        console.log(`Loaded ${response.data.length} assets from Delta Exchange India API`);
       } else {
-        setError(response.error || 'Failed to fetch stock data');
+        setError(response.error || 'Failed to fetch stock data from Delta Exchange India API');
       }
     } catch (err) {
-      setError('An unexpected error occurred while fetching data');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to connect to Delta Exchange India API';
+      setError(`API Error: ${errorMessage}. Please check your internet connection and try again.`);
       console.error('Error fetching stock data:', err);
     } finally {
       setIsLoading(false);
@@ -239,7 +241,7 @@ export default function Dashboard() {
       <footer className="bg-white border-t">
         <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
           <p className="text-center text-sm text-gray-500">
-            Data provided by Delta Exchange India API • Last updated: {lastUpdated || 'Loading...'}
+            Live data from Delta Exchange India API • Last updated: {lastUpdated || 'Loading...'}
           </p>
         </div>
       </footer>

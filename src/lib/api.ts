@@ -95,17 +95,8 @@ export async function fetchStockDataFromDeltaExchange(): Promise<ApiResponse> {
 
 export async function fetchStockData(): Promise<ApiResponse> {
   try {
-    // For now, use mock data to ensure the app works
-    // TODO: Enable real API when needed
-    console.log('Using mock data for development');
-    return {
-      success: true,
-      data: MOCK_STOCK_DATA,
-      timestamp: new Date().toISOString(),
-    };
-    
-    // Uncomment below to enable real API
-    /*
+    // Use real Delta Exchange India API
+    console.log('Fetching data from Delta Exchange India API...');
     const apiResponse = await fetchStockDataFromDeltaExchange();
     
     if (apiResponse.success && apiResponse.data && apiResponse.data.length > 0) {
@@ -113,22 +104,13 @@ export async function fetchStockData(): Promise<ApiResponse> {
       return apiResponse;
     }
     
-    // Fallback to mock data if API fails or returns no data
-    console.warn('API failed, using mock data:', apiResponse.error);
-    return {
-      success: true,
-      data: MOCK_STOCK_DATA,
-      timestamp: new Date().toISOString(),
-    };
-    */
+    // If API fails, throw error instead of using mock data
+    throw new Error(apiResponse.error || 'No data received from API');
+    
   } catch (error) {
-    // Fallback to mock data on any error
-    console.warn('API error, using mock data:', error);
-    return {
-      success: true,
-      data: MOCK_STOCK_DATA,
-      timestamp: new Date().toISOString(),
-    };
+    // Re-throw error to be handled by the UI
+    console.error('Delta Exchange API error:', error);
+    throw error;
   }
 }
 
