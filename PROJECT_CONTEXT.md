@@ -1,11 +1,13 @@
 # Stock Screener Dashboard - Project Context
 
 ## Project Overview
+
 A comprehensive, production-ready dashboard for displaying real-time cryptocurrency data from Delta Exchange India API with advanced search, filtering, interactive charts, and responsive design.
 
 ## ✅ Completed Features
 
 ### 📊 **Data Visualization**
+
 - **Interactive Charts**: Line charts, bar charts, and pie charts using Recharts
 - **Price Trends**: Visual representation of top assets by price
 - **Change Analysis**: 24h percentage changes with color coding
@@ -13,24 +15,28 @@ A comprehensive, production-ready dashboard for displaying real-time cryptocurre
 - **Quick Stats Panel**: Real-time market metrics and summaries
 
 ### 🔍 **Search & Filter**
+
 - **Real-time Search**: Instant filtering by symbol as you type
 - **Case-insensitive**: Smart search that works with any case
 - **Clear Functionality**: Easy reset with clear button
 - **Results Counter**: Shows filtered vs total assets
 
 ### 📱 **Responsive Design**
+
 - **Mobile-first**: Optimized for all screen sizes
 - **Adaptive Layout**: Charts and tables adjust to screen width
 - **Touch-friendly**: Mobile-optimized interface elements
 - **Grid System**: Responsive grid layout for different screen sizes
 
 ### 🔌 **API Integration**
+
 - **Real-time Data**: Live data from Delta Exchange India API
 - **Smart Fallback**: Graceful fallback to mock data when API fails
 - **Error Resilience**: Comprehensive error handling and recovery
 - **Data Validation**: Type-safe data processing and validation
 
 ### ⚡ **Performance & Reliability**
+
 - **Error Boundaries**: Prevents crashes from component errors
 - **Loading States**: Smooth loading indicators and skeleton screens
 - **Type Safety**: Full TypeScript implementation
@@ -39,6 +45,7 @@ A comprehensive, production-ready dashboard for displaying real-time cryptocurre
 ## 🛠️ Technical Stack
 
 ### **Frontend**
+
 - **Framework**: Next.js 14+ with App Router
 - **Language**: TypeScript for type safety
 - **Styling**: Tailwind CSS with custom design system
@@ -46,18 +53,21 @@ A comprehensive, production-ready dashboard for displaying real-time cryptocurre
 - **State Management**: React hooks (useState, useEffect)
 
 ### **API & Data**
+
 - **Primary API**: Delta Exchange India API (https://api.delta.exchange/v2/tickers)
 - **Fallback Data**: Mock data for development and API failures
 - **Data Fetching**: Fetch API with comprehensive error handling
 - **Data Processing**: Type-safe transformation and validation
 
 ### **Development Tools**
+
 - **Linting**: ESLint with Next.js configuration
 - **Build**: Next.js production build optimization
 - **Version Control**: Git with GitHub integration
 - **Package Management**: npm with lock file
 
 ## 📁 Current Project Structure
+
 ```
 src/
 ├── app/
@@ -81,6 +91,7 @@ src/
 ## 🎯 Key Components
 
 ### **Dashboard Layout**
+
 ```
 ┌─────────────────────────────────────────────────────────┐
 │                    Header + Search                      │
@@ -96,6 +107,7 @@ src/
 ```
 
 ### **Chart Types**
+
 - **Line Chart**: Top assets by price with interactive tooltips
 - **Bar Chart**: 24h percentage changes (green/red color coding)
 - **Pie Chart**: Market volume distribution with legends
@@ -104,6 +116,7 @@ src/
 ## 🔧 API Integration Details
 
 ### **Delta Exchange India API**
+
 - **Endpoint**: `https://api.delta.exchange/v2/tickers`
 - **Method**: GET request with JSON response
 - **Data Fields**: symbol, close, change_24h, volume, timestamp
@@ -111,6 +124,7 @@ src/
 - **Error Handling**: Network errors, API errors, data parsing errors
 
 ### **Data Transformation**
+
 - **Symbol**: Direct mapping from API
 - **Price**: Parsed from `close` field
 - **Change %**: Parsed from `change_24h` field
@@ -120,6 +134,7 @@ src/
 ## 🚀 Deployment Ready
 
 ### **Build Status**
+
 - ✅ **Development**: `npm run dev` - Working on localhost:3004
 - ✅ **Production Build**: `npm run build` - Successful compilation
 - ✅ **TypeScript**: No type errors
@@ -127,6 +142,7 @@ src/
 - ✅ **Git**: Version controlled with GitHub integration
 
 ### **Performance**
+
 - **Bundle Size**: ~200KB First Load JS
 - **Static Generation**: Pre-rendered for optimal performance
 - **Code Splitting**: Automatic Next.js optimization
@@ -135,6 +151,7 @@ src/
 ## 📋 Development Guidelines
 
 ### **Code Quality**
+
 - Use TypeScript for all new code
 - Implement proper error boundaries
 - Follow React best practices
@@ -142,6 +159,7 @@ src/
 - Add comprehensive error handling
 
 ### **API Integration**
+
 - Always validate API responses
 - Implement graceful fallbacks
 - Add proper error logging
@@ -149,6 +167,7 @@ src/
 - Test with both real and mock data
 
 ### **Chart Development**
+
 - Validate data before rendering
 - Provide fallback UI for empty states
 - Ensure accessibility compliance
@@ -158,6 +177,7 @@ src/
 ## 🔄 Future Enhancements
 
 ### **Potential Features**
+
 - Real-time data updates with WebSocket
 - Advanced filtering options (price range, change %)
 - Historical data charts
@@ -168,6 +188,7 @@ src/
 - Price alerts
 
 ### **Technical Improvements**
+
 - Add unit tests with Jest
 - Implement E2E tests with Playwright
 - Add performance monitoring

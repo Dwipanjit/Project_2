@@ -95,7 +95,17 @@ export async function fetchStockDataFromDeltaExchange(): Promise<ApiResponse> {
 
 export async function fetchStockData(): Promise<ApiResponse> {
   try {
-    // Try real API first
+    // For now, use mock data to ensure the app works
+    // TODO: Enable real API when needed
+    console.log('Using mock data for development');
+    return {
+      success: true,
+      data: MOCK_STOCK_DATA,
+      timestamp: new Date().toISOString(),
+    };
+    
+    // Uncomment below to enable real API
+    /*
     const apiResponse = await fetchStockDataFromDeltaExchange();
     
     if (apiResponse.success && apiResponse.data && apiResponse.data.length > 0) {
@@ -110,6 +120,7 @@ export async function fetchStockData(): Promise<ApiResponse> {
       data: MOCK_STOCK_DATA,
       timestamp: new Date().toISOString(),
     };
+    */
   } catch (error) {
     // Fallback to mock data on any error
     console.warn('API error, using mock data:', error);

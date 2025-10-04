@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { StockData } from '@/types/stock';
+import { StockData, ApiResponse } from '@/types/stock';
 import { fetchStockData, filterStocks } from '@/lib/api';
 import SearchBar from '@/components/SearchBar';
 import StockTable from '@/components/StockTable';
@@ -24,7 +24,15 @@ export default function Dashboard() {
       setIsLoading(true);
       setError(null);
       
-      const response = await fetchStockData();
+      // Add timeout to prevent hanging
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Request timeout')), 10000)
+      );
+      
+      const response = await Promise.race([
+        fetchStockData(),
+        timeoutPromise
+      ]) as ApiResponse;
       
       if (response.success) {
         setStocks(response.data);
