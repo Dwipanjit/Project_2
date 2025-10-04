@@ -9,6 +9,18 @@ interface PriceChartProps {
 }
 
 export default function PriceChart({ stocks, title = "Price Overview" }: PriceChartProps) {
+  // Validate stocks data
+  if (!stocks || !Array.isArray(stocks) || stocks.length === 0) {
+    return (
+      <div className="bg-white p-6 rounded-lg shadow">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">{title}</h3>
+        <div className="h-80 flex items-center justify-center">
+          <p className="text-gray-500">No data available for chart</p>
+        </div>
+      </div>
+    );
+  }
+
   // Sort stocks by price for better visualization
   const sortedStocks = [...stocks].sort((a, b) => b.price - a.price);
   

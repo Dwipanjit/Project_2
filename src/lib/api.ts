@@ -30,17 +30,46 @@ export async function fetchStockDataFromDeltaExchange(): Promise<ApiResponse> {
 
     const data = await response.json();
     
-    // Transform Delta Exchange data to our format
+    // Validate API response structure
+    if (!data || !data.result || !Array.isArray(data.result)) {
+      throw new Error('Invalid API response structure');
+    }
+    
+    // Transform Delta Exchange data to our format with better error handling
     const transformedData: StockData[] = data.result
-      .filter((item: any) => item.symbol && item.close && item.change_24h !== undefined)
-      .map((item: any) => ({
-        symbol: item.symbol,
-        price: parseFloat(item.close),
-        changePercent: parseFloat(item.change_24h),
-        volume: parseFloat(item.volume) || 0,
-        lastUpdated: item.timestamp,
-      }))
+      .filter((item: any) => {
+        try {
+          return item && 
+                 item.symbol && 
+                 typeof item.close === 'string' && 
+                 typeof item.change_24h === 'string' &&
+                 !isNaN(parseFloat(item.close)) &&
+                 !isNaN(parseFloat(item.change_24h));
+        } catch (e) {
+          console.warn('Invalid item in API response:', item);
+          return false;
+        }
+      })
+      .map((item: any) => {
+        try {
+          return {
+            symbol: String(item.symbol),
+            price: parseFloat(item.close),
+            changePercent: parseFloat(item.change_24h),
+            volume: parseFloat(item.volume) || 0,
+            lastUpdated: item.timestamp || new Date().toISOString(),
+          };
+        } catch (e) {
+          console.warn('Error parsing item:', item, e);
+          return null;
+        }
+      })
+      .filter((item: StockData | null): item is StockData => item !== null)
       .slice(0, 50); // Limit to top 50 for better performance
+
+    if (transformedData.length === 0) {
+      throw new Error('No valid data received from API');
+    }
 
     return {
       success: true,
@@ -48,6 +77,7 @@ export async function fetchStockDataFromDeltaExchange(): Promise<ApiResponse> {
       timestamp: new Date().toISOString(),
     };
   } catch (error) {
+    console.error('Delta Exchange API error:', error);
     const apiError: ApiError = {
       message: error instanceof Error ? error.message : 'Failed to fetch data from Delta Exchange',
       code: 'API_ERROR',
@@ -68,7 +98,8 @@ export async function fetchStockData(): Promise<ApiResponse> {
     // Try real API first
     const apiResponse = await fetchStockDataFromDeltaExchange();
     
-    if (apiResponse.success && apiResponse.data.length > 0) {
+    if (apiResponse.success && apiResponse.data && apiResponse.data.length > 0) {
+      console.log('Successfully fetched data from Delta Exchange API');
       return apiResponse;
     }
     
