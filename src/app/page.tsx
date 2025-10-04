@@ -166,7 +166,7 @@ export default function Dashboard() {
                 <p className="text-sm text-gray-600">
                   {searchQuery ? (
                     <>
-                      Showing {filteredStocks.length} of {stocks.length} assets matching "{searchQuery}"
+                      Showing {filteredStocks.length} of {stocks.length} assets matching &quot;{searchQuery}&quot;
                     </>
                   ) : (
                     <>
